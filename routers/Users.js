@@ -65,7 +65,7 @@ router.get("/:id", async (req, res) => {
 // Update Single user
 router.put("/:id", async (req, res) => {
     try {
-        const { email, fullName } = req.body;
+        const { email, fullName, password } = req.body;
         const userInDb = await UserModel.findById(req.params.id);
         if (!userInDb) {
             return res.status(404).json({

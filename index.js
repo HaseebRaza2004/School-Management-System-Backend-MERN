@@ -3,6 +3,7 @@ import morgan from "morgan";
 import 'dotenv/config';
 import mongoose from "mongoose";
 import userRoutes from "./routers/Users.js";
+import authRoutes from "./routers/Auth.js";
 
 const app = express();
 const PORT = 4000;
@@ -16,10 +17,8 @@ mongoose
   .then(() => console.log("MongoDB Connected Successfully"))
   .catch((error) => console.log("Error =>", error));
 
-app.get("/", (req, res) => {
-  res.send("First API Successfully fetched");
-});
 
 app.use("/users", userRoutes);
+app.use("/auth", authRoutes)
 
 app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
