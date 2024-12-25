@@ -1,115 +1,114 @@
 import express from "express";
-import { UserModel } from "../models/Users.js";
+import { CourseModal } from "../models/Courses.js";
 
 const router = express.Router();
 
-// Get All Users
 router.get("/", async (req, res) => {
     try {
-        let users = await UserModel.find();
+        let users = await CourseModal.find();
         res.status(200).json({
             error: false,
             users: users,
-            message: "All Users fetched successfully",
+            message: "All Courses fetched successfully",
         });
     } catch (error) {
         res.status(404).json({
             error: true,
-            message: "Failed to fetch users",
+            message: "Failed to fetch courses",
         });
     }
 });
 
-// Add User To DB
+// Add Course To DB
 router.post("/", async (req, res) => {
     try {
-        const user = req.body;
-        let newUser = new UserModel(user);
-        newUser = await newUser.save();
+        const course = req.body;
+        let newCourse = new CourseModal(course);
+        newCourse = await newCourse.save();
         res.status(200).json({
             error: false,
-            user: newUser,
-            message: "User Added successfully",
+            course: newCourse,
+            message: "Course Added successfully",
         });
     } catch (error) {
         res.status(404).json({
             error: true,
-            message: "Failed to add user",
+            message: "Failed to add course",
         });
     }
 });
 
-// Get Single User By Id
+// Get Single Course By Id
 router.get("/:id", async (req, res) => {
     try {
-        const user = await UserModel.findById(req.params.id);
-        if (!user) {
+        const course = await CourseModal.findById(req.params.id);
+        if (!course) {
             return res.status(404).json({
                 error: true,
-                message: "User Not Found",
+                message: "Course Not Found",
             })
         };
         res.status(200).json({
             error: false,
-            user,
-            message: "User fetched successfully",
+            course,
+            message: "course fetched successfully",
         });
     } catch (error) {
         res.status(404).json({
             error: true,
-            message: "User Not Found",
+            message: "course Not Found",
         });
     }
 });
 
-// Update Single user
+// Update Single course
 router.put("/:id", async (req, res) => {
     try {
-        const { email, fullName, password } = req.body;
-        const userInDb = await UserModel.findById(req.params.id);
-        if (!userInDb) {
+        const { title, thumbnail, description } = req.body;
+        const courseInDb = await CourseModal.findById(req.params.id);
+        if (!courseInDb) {
             return res.status(404).json({
                 error: true,
-                message: "User Not Found",
+                message: "Course Not Found",
             })
         };
-        if (email) userInDb.email = email;
-        if (fullName) userInDb.fullName = fullName;
-        if (password) userInDb.password = password;
-        await userInDb.save();
+        if (title) courseInDb.title = title;
+        if (thumbnail) courseInDb.thumbnail = thumbnail;
+        if (description) courseInDb.description = description;
+        await courseInDb.save();
         res.status(200).json({
             error: false,
-            userInDb,
-            message: "User Updated successfully",
+            courseInDb,
+            message: "Course Updated successfully",
         });
     } catch (error) {
         res.status(404).json({
             error: true,
-            message: "User Not Found",
+            message: "Course Not Found",
         });
     }
 });
 
-// Delete User
+// Delete Course
 router.delete("/:id", async (req, res) => {
     try {
-        const userInDb = await UserModel.findById(req.params.id);
-        if (!userInDb) {
+        const courseInDb = await CourseModal.findById(req.params.id);
+        if (!courseInDb) {
             return res.status(404).json({
                 error: true,
                 message: "User Not Found",
             })
         };
-        await UserModel.deleteOne({ _id: req.params.id })
+        await CourseModal.deleteOne({ _id: req.params.id })
         res.status(200).json({
             error: false,
             userInDb: null,
-            message: "User Deleted successfully",
+            message: "Course Deleted successfully",
         });
     } catch (error) {
         res.status(404).json({
             error: true,
-            message: "User Not Found",
+            message: "Course Not Found",
         });
     }
 });
