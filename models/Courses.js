@@ -10,6 +10,7 @@ const courseSchema = new Schema({
   },
   description: { type: String, required: true },
   speciality: { type: String, required: true },
+  fees: {type: Number, required: true},
   teacher: { type: mongoose.Schema.Types.ObjectID, ref: "Teacher" },
   students: [{ type: mongoose.Schema.Types.ObjectID, ref: "Student" }],
   createdAt: {
