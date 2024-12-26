@@ -18,4 +18,4 @@ const userSchema = new Schema(
     },
 );
 
-export const UserModel = mongoose.modal("Users", userSchema);
+export const UserModel = mongoose.model("Users", userSchema);
