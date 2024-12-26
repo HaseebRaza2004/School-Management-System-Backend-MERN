@@ -1,5 +1,9 @@
 import express from "express";
 import passport from "passport";
+import dotenv from "dotenv";
+
+// // Load environment variables
+dotenv.config();
 
 const router = express.Router();
 
