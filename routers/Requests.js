@@ -1,21 +1,20 @@
 import express from "express"
+import { RequestModel } from "../models/Request.js";
+import { UserModel } from "../models/Users.js";
+
 const router = express.Router(); 
-
-const Request = require('../models/Request.js'); 
-const User = require('../models/Users.js'); 
-
 
 // Submit a request to become a teacher
 router.post('/apply', async (req, res) => {
   const { userId } = req.body;
 
   try {
-    const existingRequest = await Request.findOne({ userId, status: 'pending' });
+    const existingRequest = await RequestModel.findOne({ userId, status: 'pending' });
     if (existingRequest) {
       return res.status(400).json({ message: 'You already have a pending request.' });
     }
 
-    const newRequest = new Request({ userId });
+    const newRequest = new RequestModel({ userId });
     await newRequest.save();
 
     res.status(201).json({ message: 'Request submitted successfully.' });
@@ -25,9 +24,9 @@ router.post('/apply', async (req, res) => {
 });
 
 // Get all requests for admin
-router.get('/routes/Requests.js', async (req, res) => {
+router.get('/routes/Requests', async (req, res) => {
   try {
-    const requests = await Request.find().populate('userId', 'name email');
+    const requests = await RequestModel.find().populate('userId', 'name email');
     res.status(200).json(requests);
   } catch (err) {
     res.status(500).json({ message: 'Server error', error: err.message });
@@ -35,7 +34,7 @@ router.get('/routes/Requests.js', async (req, res) => {
 });
 
 // Approve or reject a request
-router.patch('/routes/Requests.js', async (req, res) => {
+router.patch('/routes/Requests', async (req, res) => {
   const { id } = req.params;
   const { status } = req.body;
 
@@ -44,7 +43,7 @@ router.patch('/routes/Requests.js', async (req, res) => {
   }
 
   try {
-    const request = await Request.findByIdAndUpdate(id, { status }, { new: true });
+    const request = await RequestModel.findByIdAndUpdate(id, { status }, { new: true });
 
     if (!request) {
       return res.status(404).json({ message: 'Request not found.' });
@@ -52,7 +51,7 @@ router.patch('/routes/Requests.js', async (req, res) => {
 
     // Update user role if approved
     if (status === 'approved') {
-      await User.findByIdAndUpdate(request.userId, { role: 'teacher' });
+      await UserModel.findByIdAndUpdate(request.userId, { role: 'teacher' });
     }
 
     res.status(200).json({ message: `Request ${status} successfully.` });
