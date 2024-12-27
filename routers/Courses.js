@@ -1,11 +1,12 @@
 import express from "express";
-import { CourseModal } from "../models/Courses.js";
+import { courseModel } from "../models/Courses.js";
 
 const router = express.Router();
 
+// Get All Courses From Db
 router.get("/", async (req, res) => {
     try {
-        let users = await CourseModal.find();
+        let users = await courseModel.find();
         res.status(200).json({
             error: false,
             users: users,
@@ -23,7 +24,7 @@ router.get("/", async (req, res) => {
 router.post("/", async (req, res) => {
     try {
         const course = req.body;
-        let newCourse = new CourseModal(course);
+        let newCourse = new courseModel(course);
         newCourse = await newCourse.save();
         res.status(200).json({
             error: false,
@@ -41,7 +42,7 @@ router.post("/", async (req, res) => {
 // Get Single Course By Id
 router.get("/:id", async (req, res) => {
     try {
-        const course = await CourseModal.findById(req.params.id);
+        const course = await courseModel.findById(req.params.id);
         if (!course) {
             return res.status(404).json({
                 error: true,
@@ -64,8 +65,8 @@ router.get("/:id", async (req, res) => {
 // Update Single course
 router.put("/:id", async (req, res) => {
     try {
-        const { title, thumbnail, description } = req.body;
-        const courseInDb = await CourseModal.findById(req.params.id);
+        const { title, description } = req.body;
+        const courseInDb = await courseModel.findById(req.params.id);
         if (!courseInDb) {
             return res.status(404).json({
                 error: true,
@@ -73,7 +74,7 @@ router.put("/:id", async (req, res) => {
             })
         };
         if (title) courseInDb.title = title;
-        if (thumbnail) courseInDb.thumbnail = thumbnail;
+        // if (thumbnail) courseInDb.thumbnail = thumbnail;
         if (description) courseInDb.description = description;
         await courseInDb.save();
         res.status(200).json({
@@ -92,14 +93,14 @@ router.put("/:id", async (req, res) => {
 // Delete Course
 router.delete("/:id", async (req, res) => {
     try {
-        const courseInDb = await CourseModal.findById(req.params.id);
+        const courseInDb = await courseModel.findById(req.params.id);
         if (!courseInDb) {
             return res.status(404).json({
                 error: true,
-                message: "User Not Found",
+                message: "Course Not Found",
             })
         };
-        await CourseModal.deleteOne({ _id: req.params.id })
+        await courseModel.deleteOne({ _id: req.params.id })
         res.status(200).json({
             error: false,
             userInDb: null,
