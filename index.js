@@ -31,7 +31,11 @@ const PORT = process.env.PORT;
 app.use(morgan("tiny"));
 app.use(express.json());
 app.use(bodyParser.json());
-app.use(cors({ origin: process.env.FRONTEND_URL, credentials: true }));
+app.use(cors({
+  origin: process.env.FRONTEND_URL,
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true
+}));
 app.use(
   session({
     secret: process.env.SESSION_SECRET || 'default_secret',
@@ -144,8 +148,10 @@ app.get('/api/user', (req, res) => {
 
 app.get('/logout', (req, res) => {
   req.logout((err) => {
-    if (err) return res.status(500).json({ message: 'Error logging out' });
-    res.redirect(process.env.FRONTEND_URL);
+    if (err) return res.status(500).json({ error: 'Logout failed' });
+
+    res.clearCookie('connect.sid', { path: '/' }); // Replace 'connect.sid' with your session cookie name
+    res.status(200).json({ message: 'Successfully logged out' });
   });
 });
 
