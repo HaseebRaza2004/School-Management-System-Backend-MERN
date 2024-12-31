@@ -118,7 +118,7 @@ async function findOrCreateUser(provider, profile) {
   });
   await newUser.save();
   return newUser;
-}
+};
 
 // Routes
 app.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
@@ -129,6 +129,7 @@ app.get('/auth/google/callback', passport.authenticate('google', { failureRedire
 app.get('/auth/github', passport.authenticate('github', { scope: ['user:email'] }));
 app.get('/auth/github/callback', passport.authenticate('github', { failureRedirect: '/' }), (req, res) => {
   res.redirect(process.env.FRONTEND_URL);
+
 });
 
 app.get('/auth/facebook', passport.authenticate('facebook', { scope: ['email'] }));
@@ -136,7 +137,7 @@ app.get('/auth/facebook/callback', passport.authenticate('facebook', { failureRe
   res.redirect(process.env.FRONTEND_URL);
 });
 
-app.get('/profile', (req, res) => {
+app.get('/api/user', (req, res) => {
   if (!req.isAuthenticated()) return res.status(401).json({ message: 'Unauthorized' });
   res.json(req.user);
 });

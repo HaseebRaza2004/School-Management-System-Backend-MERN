@@ -24,7 +24,7 @@ router.post('/apply', async (req, res) => {
 });
 
 // Get all requests for admin
-router.get('/routes/Requests', async (req, res) => {
+router.get('/', async (req, res) => {
   try {
     const requests = await RequestModel.find().populate('userId', 'name email');
     res.status(200).json(requests);
