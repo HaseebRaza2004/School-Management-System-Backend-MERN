@@ -5,8 +5,9 @@ const { Schema } = mongoose;
 const requestSchema = new Schema({
   userId: { type: mongoose.Types.ObjectId, ref: 'User', required: true },
   status: { type: String, enum: ['pending', 'approved', 'rejected'], default: 'pending' },
+  contact: { type: String },
   education: { type: String },
-  specialistSubject: [{ type: String }],
+  specialistSubject: { type: String },
   workExperience: { type: String },
   skills: { type: String },
 },
