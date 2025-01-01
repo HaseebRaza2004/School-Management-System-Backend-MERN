@@ -2,19 +2,18 @@ import express from "express"
 import { RequestModel } from "../models/Request.js";
 import { UserModel } from "../models/Users.js";
 
-const router = express.Router(); 
+const router = express.Router();
 
 // Submit a request to become a teacher
 router.post('/apply', async (req, res) => {
   const { userId } = req.body;
-
   try {
     const existingRequest = await RequestModel.findOne({ userId, status: 'pending' });
     if (existingRequest) {
       return res.status(400).json({ message: 'You already have a pending request.' });
     }
 
-    const newRequest = new RequestModel({ userId });
+    const newRequest = new RequestModel(req.body);
     await newRequest.save();
 
     res.status(201).json({ message: 'Request submitted successfully.' });
