@@ -6,10 +6,10 @@ const router = express.Router();
 // Get All Courses From Db
 router.get("/", async (req, res) => {
     try {
-        let users = await courseModel.find();
+        let courses = await courseModel.find();
         res.status(200).json({
             error: false,
-            users: users,
+            courses,
             message: "All Courses fetched successfully",
         });
     } catch (error) {
@@ -42,6 +42,7 @@ router.post("/", async (req, res) => {
 // Get Single Course By Id
 router.get("/:id", async (req, res) => {
     try {
+        console.log("id in backend =>",req.params.id);
         const course = await courseModel.findById(req.params.id);
         if (!course) {
             return res.status(404).json({
