@@ -25,7 +25,7 @@ router.post('/apply', async (req, res) => {
 // Get all requests for admin
 router.get('/', async (req, res) => {
   try {
-    const requests = await RequestModel.find().populate('userId', 'name email');
+    const requests = await RequestModel.find().populate('userId');
     res.status(200).json(requests);
   } catch (err) {
     res.status(500).json({ message: 'Server error', error: err.message });
@@ -33,7 +33,7 @@ router.get('/', async (req, res) => {
 });
 
 // Approve or reject a request
-router.patch('/routes/Requests', async (req, res) => {
+router.patch('/routes/Requests/:id', async (req, res) => {
   const { id } = req.params;
   const { status } = req.body;
 
