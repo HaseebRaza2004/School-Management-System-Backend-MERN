@@ -11,7 +11,9 @@ const userSchema = new Schema(
         profilePhoto: { type: String },
         role: { type: String, default: "student", enum: ["student", "teacher", "admin"] },
         token: { type: String || "" },
+        enrolledCourses: [{ type: mongoose.Schema.Types.ObjectId, ref: "Course" }],
     },
+    
     {
         timestamps: true,
     },

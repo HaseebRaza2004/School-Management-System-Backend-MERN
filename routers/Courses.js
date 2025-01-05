@@ -1,12 +1,13 @@
 import express from "express";
 import { courseModel } from "../models/Courses.js";
+import { UserModel } from "../models/Users.js";
 
 const router = express.Router();
 
 // Get All Courses From Db
 router.get("/", async (req, res) => {
     try {
-        let courses = await courseModel.find();
+        let courses = await courseModel.find().populate('teacherId');
         res.status(200).json({
             error: false,
             courses,
@@ -36,14 +37,69 @@ router.post("/", async (req, res) => {
             error: true,
             message: "Failed to add course",
         });
+    };
+});
+
+// Enroll student
+router.post("/:id/enroll", async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { userId } = req.body; // Get userId from request body
+
+        // Check if course exists
+        const course = await courseModel.findById(id);
+        if (!course) {
+            return res.status(404).json({
+                error: true,
+                message: "Course not found"
+            });
+        }
+
+        // Check if user exists
+        const user = await UserModel.findById(userId);
+        if (!user) {
+            return res.status(404).json({
+                error: true,
+                message: "User not found"
+            });
+        }
+
+        // Check if already enrolled
+        if (course.studentsId.includes(userId)) {
+            return res.status(400).json({
+                error: true,
+                message: "Already enrolled in this course"
+            });
+        }
+
+        // Add student to course
+        course.studentsId.push(userId);
+        await course.save();
+
+        // Add course to user's enrolled courses
+        user.enrolledCourses.push(id);
+        await user.save();
+
+        res.status(200).json({
+            error: false,
+            message: "Successfully enrolled in course",
+            course
+        });
+    } catch (error) {
+        console.error("Enrollment error:", error);
+        res.status(500).json({
+            error: true,
+            message: "Error enrolling in course"
+        });
     }
 });
 
 // Get Single Course By Id
 router.get("/:id", async (req, res) => {
     try {
-        console.log("id in backend =>",req.params.id);
-        const course = await courseModel.findById(req.params.id);
+        const course = await courseModel.findById(req.params.id)
+            .populate('teacherId')
+            // .populate({ path: 'studentId' });
         if (!course) {
             return res.status(404).json({
                 error: true,
