@@ -99,7 +99,10 @@ router.get("/:id", async (req, res) => {
     try {
         const course = await courseModel.findById(req.params.id)
             .populate('teacherId')
-            // .populate({ path: 'studentId' });
+            .populate({
+                path: 'studentsId',
+                select: 'name email profilePhoto' // Only select the fields you want to show
+            });
         if (!course) {
             return res.status(404).json({
                 error: true,
@@ -167,6 +170,60 @@ router.delete("/:id", async (req, res) => {
         res.status(404).json({
             error: true,
             message: "Course Not Found",
+        });
+    }
+});
+
+//  find course created by teacher
+router.get("/teacher/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+        const courses = await courseModel.find({ teacherId: id }).populate("studentsId", "name email");
+
+        if (!courses.length) {
+            return res.status(404).json({
+                error: true,
+                message: "No courses found for this teacher",
+            });
+        }
+
+        res.status(200).json({
+            error: false,
+            courses,
+            message: "Courses fetched successfully",
+        });
+    } catch (error) {
+        console.error("Error fetching teacher's courses:", error);
+        res.status(500).json({
+            error: true,
+            message: "Error fetching courses",
+        });
+    }
+});
+
+// find course that student enroll
+router.get("/student/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+        const courses = await courseModel.find({ studentsId: id }).populate("teacherId", "name email");
+
+        if (!courses.length) {
+            return res.status(404).json({
+                error: true,
+                message: "No courses found for this student",
+            });
+        }
+
+        res.status(200).json({
+            error: false,
+            courses,
+            message: "Courses fetched successfully",
+        });
+    } catch (error) {
+        console.error("Error fetching student's courses:", error);
+        res.status(500).json({
+            error: true,
+            message: "Error fetching courses",
         });
     }
 });
