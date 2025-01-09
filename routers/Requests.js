@@ -59,4 +59,21 @@ router.patch('/routes/Requests/:id', async (req, res) => {
   }
 });
 
+// Get all approve teachers
+router.get("/teachers", async (req, res) => {
+  try {
+    let teachers = await RequestModel.find({ status: 'approved' }).populate('userId');
+    res.status(200).json({
+      error: false,
+      teachers: teachers,
+      message: "All Teachers fetched successfully",
+    });
+  } catch (error) {
+    res.status(404).json({
+      error: true,
+      message: "Failed to fetch Teachers",
+    });
+  }
+});
+
 export default router;
