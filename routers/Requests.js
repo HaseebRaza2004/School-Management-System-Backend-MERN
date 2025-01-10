@@ -42,15 +42,30 @@ router.patch('/routes/Requests/:id', async (req, res) => {
   }
 
   try {
-    const request = await RequestModel.findByIdAndUpdate(id, { status }, { new: true });
+    let request;
 
-    if (!request) {
-      return res.status(404).json({ message: 'Request not found.' });
-    }
-
-    // Update user role if approved
     if (status === 'approved') {
+      request = await RequestModel.findByIdAndUpdate(id, { status }, { new: true });
+
+      if (!request) {
+        return res.status(404).json({ message: 'Request not found.' });
+      }
+
       await UserModel.findByIdAndUpdate(request.userId, { role: 'teacher' });
+    } else if (status === 'rejected') {
+      // Delete the request
+      request = await RequestModel.findByIdAndDelete(id);
+
+      if (!request) {
+        return res.status(404).json({ message: 'Request not found.' });
+      }
+
+      // Check if the user role is already 'teacher'
+      const user = await UserModel.findById(request.userId);
+      if (user && user.role === 'teacher') {
+        // Update user role to 'student'
+        await UserModel.findByIdAndUpdate(request.userId, { role: 'student' });
+      }
     }
 
     res.status(200).json({ message: `Request ${status} successfully.` });
