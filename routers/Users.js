@@ -20,6 +20,23 @@ router.get("/", async (req, res) => {
     }
 });
 
+// get students
+router.get("/students", async (req, res) => {
+    try {
+        let students = await UserModel.find({ role: 'student' });
+        res.status(200).json({
+            error: false,
+            students: students,
+            message: "All Students fetched successfully",
+        });
+    } catch (error) {
+        res.status(404).json({
+            error: true,
+            message: "Failed to fetch Students",
+        });
+    }
+});
+
 // Add User To DB
 router.post("/", async (req, res) => {
     try {
