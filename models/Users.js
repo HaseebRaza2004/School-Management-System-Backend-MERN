@@ -7,7 +7,7 @@ const userSchema = new Schema(
         provider: { type: String },
         providerId: { type: String },
         name: { type: String },
-        email: { type: String, unique: true, required: true },
+        email: { type: String || "" },
         profilePhoto: { type: String },
         role: { type: String, default: "student", enum: ["student", "teacher", "admin"] },
         token: { type: String || "" },
