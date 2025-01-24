@@ -57,7 +57,7 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: '/auth/google/callback',
+      callbackURL: 'https://school-management-system-backend-mern.onrender.com/auth/google/callback',
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
@@ -132,7 +132,6 @@ app.get('/auth/google/callback', passport.authenticate('google', { failureRedire
 app.get('/auth/github', passport.authenticate('github', { scope: ['user:email'] }));
 app.get('/auth/github/callback', passport.authenticate('github', { failureRedirect: '/' }), (req, res) => {
   res.redirect(process.env.FRONTEND_URL);
-
 });
 
 app.get('/auth/facebook', passport.authenticate('facebook', { scope: ['email'] }));
