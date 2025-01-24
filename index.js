@@ -40,6 +40,10 @@ app.use(
     secret: process.env.SESSION_SECRET || 'default_secret',
     resave: false,
     saveUninitialized: false,
+    cookie: {
+      secure: 'production', // Ensure secure cookies in production
+      httpOnly: true,
+    },
   })
 );
 app.use(passport.initialize());
@@ -52,18 +56,39 @@ passport.deserializeUser((id, done) => {
 });
 
 // Strategies Configuration
+// passport.use(
+//   new GoogleStrategy(
+//     {
+//       clientID: process.env.GOOGLE_CLIENT_ID,
+//       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+//       callbackURL: '/auth/google/callback',
+//     },
+//     async (accessToken, refreshToken, profile, done) => {
+//       try {
+//         const user = await findOrCreateUser('google', profile);
+//         done(null, user);
+//       } catch (err) {
+//         done(err);
+//       }
+//     }
+//   )
+// );
+
 passport.use(
   new GoogleStrategy(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: '/auth/google/callback',
+      callbackURL: 'https://school-management-system-backend-mern.onrender.com/auth/google/callback',
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
+        console.log('Access Token:', accessToken);
+        console.log('Profile:', profile);
         const user = await findOrCreateUser('google', profile);
         done(null, user);
       } catch (err) {
+        console.error('Error in Google Strategy:', err);
         done(err);
       }
     }
